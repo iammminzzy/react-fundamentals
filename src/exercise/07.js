@@ -29,8 +29,13 @@ function App() {
       </button>
       <ul>
         {items.map(item => (
-          // 🐨 add a key prop to the <li> below. Set it to item.id
-          <li>
+          /*
+          - Why the key prop is necessary? ✨
+           "Key Prop" is used to identify unique components or elements within an array. "Key Prop" helps React keep track of individual elements and their state across renders.
+              1. Efficient Reconciliation
+              2. Avoiding Unnecessary Re-renders
+          */
+          <li key={item.id}>
             <button onClick={() => removeItem(item)}>remove</button>{' '}
             <label htmlFor={`${item.id}-input`}>{item.value}</label>{' '}
             <input id={`${item.id}-input`} defaultValue={item.value} />
