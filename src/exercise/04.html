@@ -3,22 +3,145 @@
 
 <body>
   <div id="root"></div>
+  <div id="root1"></div>
+  <div id="root2"></div>
+  <div id="root3"></div>
+  <div id="root4"></div>
+  <div id="root5"></div>
   <script src="https://unpkg.com/react@18.1.0/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18.1.0/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.12.4/babel.js"></script>
-  <script type="text/babel">
-    // 🐨 Make a function called `message` which returns the JSX we want to share
+  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
 
-    // 🐨 use that function in place of the divs below with:
-    // 💰 {message({children: 'Hello World'})} {message({children: 'Goodbye World'})}
+  <script type="text/babel">
+    function message({children}) {
+      return <div className="message">{children}</div>
+    }
+
+    const hello = message({children: 'Hello world'})
+    const goodbye = message({children: 'Goodbye world'})
+    const byebye = message({children: 'Bye bye world'})
+
     const element = (
       <div className="container">
-        <div className="message">Hello World</div>
-        <div className="message">Goodbye World</div>
+        {hello}
+        {goodbye}
+        {byebye}
       </div>
     )
 
-    // 💯 This is only the first step to making actual React components. The rest is in the extra credit!
+    /* 1. 💯 using a custom component with React.createElement */
+    const helloElement = React.createElement(message, {
+      children: 'Hello world 1',
+    })
+
+    const element1 = (
+      <div className="container1">
+        {helloElement}
+        {React.createElement(message, {children: 'Goodbye world 1'})}
+      </div>
+    )
+
+    /* 2. 💯 using a custom component with JSX */
+    // Using JSX is recommended for improved code readability and maintainability.
+    function Message2({children}) {
+      return <div className="message">{children}</div>
+    }
+
+    const element2 = (
+      <div className="container2">
+        <Message2>Hello world 2</Message2>
+        <Message2>Goodbye world 2</Message2>
+      </div>
+    )
+
+    /* 3. 💯 Runtime validation with PropTypes */
+    // If you're not using a static-type language like TypeScript, then I do recommend that you implement PropTypes on most of the components in your React application
+    const PropTypes3 = {
+      string(props, propName, componentName) {
+        const type = typeof props[propName]
+        if (type !== 'string') {
+          return new Error(
+            `Hey, the component ${componentName} needs the prop ${propName} to be "string" but was passed a ${type}`,
+          )
+        }
+      },
+      number(props, propName, componentName) {
+        const type = typeof props[propName]
+        if (type !== 'number') {
+          return new Error(
+            `Hey, the component ${componentName} needs the prop ${propName} to be "number" but was passed a ${type}`,
+          )
+        }
+      },
+    }
+
+    function Message3({subject, greeting}) {
+      return (
+        <div className="message">
+          {greeting}, {subject}
+        </div>
+      )
+    }
+
+    Message3.propTypes = {
+      subject: PropTypes3.number,
+      greeting: PropTypes3.string,
+    }
+
+    const element3 = (
+      <div className="container3">
+        <Message3 greeting="Hello" />
+        <Message3 greeting="Goodbye" subject={3.0} />
+      </div>
+    )
+
+    /* 4. 💯 Use the prop-types package */
+    // https://unpkg.com/prop-types@15.7.2/prop-types.js
+    function Message4({subject, greeting}) {
+      return (
+        <div className="message">
+          {greeting}, {subject}
+        </div>
+      )
+    }
+
+    // By default, the PropTypes validators(package) do not set these values as required.
+    Message4.propTypes = {
+      subject: PropTypes.number.isRequired,
+      greeting: PropTypes.string.isRequired,
+    }
+
+    const element4 = (
+      <div className="container4">
+        <Message4 greeting="Hello" />
+        <Message4 subject={4} />
+      </div>
+    )
+
+    /* 5. 💯 using React Fragments */
+    // If I want to not have that container(unnecessary div) and just render two elements sides by side inside of my root
+    function Message5({subject, greeting}) {
+      return (
+        <div className="message">
+          {greeting}, {subject}
+        </div>
+      )
+    }
+
+    // ✨ <React.Fragment></React.Fragment> === <></>
+    const element5 = (
+      <React.Fragment>
+        <Message5 greeting="Hello" subject="World 5" />
+        <Message5 greeting="Goodbye" subject="World 5" />
+      </React.Fragment>
+    )
+
     ReactDOM.createRoot(document.getElementById('root')).render(element)
+    ReactDOM.createRoot(document.getElementById('root1')).render(element1)
+    ReactDOM.createRoot(document.getElementById('root2')).render(element2)
+    ReactDOM.createRoot(document.getElementById('root3')).render(element3)
+    ReactDOM.createRoot(document.getElementById('root4')).render(element4)
+    ReactDOM.createRoot(document.getElementById('root5')).render(element5)
   </script>
 </body>
